@@ -32,6 +32,18 @@
 | [Applied Energistics 2](https://modrinth.com/mod/ae2) | 19.2.17+ | ❌ (任意) |
 | [JEI](https://modrinth.com/mod/jei) | 19.27+ | ❌ (任意) |
 
+### 📸 スクリーンショット
+
+<p align="center">
+  <img src="説明用素材/items.png" width="700" alt="追加アイテム一覧">
+  <br><em>追加アイテム・ブロック一覧</em>
+</p>
+
+<p align="center">
+  <img src="説明用素材/gui.png" width="700" alt="GUI">
+  <br><em>第2世代GUI — 展開式タブ・ブロックリスト</em>
+</p>
+
 ### ✨ 追加アイテム・ブロック
 
 #### 🔫 EMC概略図砲（ブロック）
@@ -180,6 +192,18 @@ A NeoForge mod that combines **Create**'s Schematic Cannon with **ProjectE**'s E
 | [ProjectE](https://www.curseforge.com/minecraft/mc-mods/projecte) | 1.1.0+ | ✅ |
 | [Applied Energistics 2](https://modrinth.com/mod/ae2) | 19.2.17+ | ❌ (Optional) |
 | [JEI](https://modrinth.com/mod/jei) | 19.27+ | ❌ (Optional) |
+
+### 📸 Screenshots
+
+<p align="center">
+  <img src="説明用素材/items.png" width="700" alt="Added Items">
+  <br><em>Added Items & Blocks</em>
+</p>
+
+<p align="center">
+  <img src="説明用素材/gui.png" width="700" alt="GUI">
+  <br><em>Gen2 GUI — Expandable Tabs & Block List</em>
+</p>
 
 ### ✨ Added Items & Blocks
 
