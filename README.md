@@ -28,7 +28,7 @@
 | Mod | バージョン | 必須 |
 |-----|-----------|------|
 | [Create](https://modrinth.com/mod/create) | 6.0.9+ | ✅ |
-| [ProjectE](https://modrinth.com/mod/projecte) | 1.1.0+ | ✅ |
+| [ProjectE](https://www.curseforge.com/minecraft/mc-mods/projecte) | 1.1.0+ | ✅ |
 | [Applied Energistics 2](https://modrinth.com/mod/ae2) | 19.2.17+ | ❌ (任意) |
 | [JEI](https://modrinth.com/mod/jei) | 19.27+ | ❌ (任意) |
 
@@ -177,7 +177,7 @@ A NeoForge mod that combines **Create**'s Schematic Cannon with **ProjectE**'s E
 | Mod | Version | Required |
 |-----|---------|----------|
 | [Create](https://modrinth.com/mod/create) | 6.0.9+ | ✅ |
-| [ProjectE](https://modrinth.com/mod/projecte) | 1.1.0+ | ✅ |
+| [ProjectE](https://www.curseforge.com/minecraft/mc-mods/projecte) | 1.1.0+ | ✅ |
 | [Applied Energistics 2](https://modrinth.com/mod/ae2) | 19.2.17+ | ❌ (Optional) |
 | [JEI](https://modrinth.com/mod/jei) | 19.27+ | ❌ (Optional) |
 
@@ -319,7 +319,7 @@ Output: `build/libs/emcschematicannon-x.x.x.jar`
 
 ### 🛠 Technology Stack / 技術スタック
 - **Platform**: [NeoForge](https://neoforged.net/) 21.1.168+ (Minecraft 1.21.1)
-- **EMC System**: [ProjectE](https://modrinth.com/mod/projecte) ITransmutationProxy / IEMCProxy
+- **EMC System**: [ProjectE](https://www.curseforge.com/minecraft/mc-mods/projecte) ITransmutationProxy / IEMCProxy
 - **Storage**: [Applied Energistics 2](https://modrinth.com/mod/ae2) Grid Node Integration
 - **Recipe Viewer**: [JEI](https://modrinth.com/mod/jei) Plugin Support
 
