@@ -14,9 +14,20 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     mavenCentral()
-    // Use local JARs from libs/ folder
-    flatDir {
-        dirs 'libs'
+    maven {
+        name = 'BlamedJared'
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei' }
+    }
+    maven {
+        name = 'CreateMod'
+        url = 'https://maven.createmod.net'
+        content { includeGroup 'com.simibubi.create' }
+    }
+    maven {
+        name = 'CurseMaven'
+        url = 'https://www.cursemaven.com'
+        content { includeGroup 'curse.maven' }
     }
 }
 
@@ -40,11 +51,14 @@ neoForge {
 }
 
 dependencies {
-    // Local JARs from libs/ folder (compileOnly - not bundled into output)
-    compileOnly files('libs/create-1.21.1-6.0.9.jar')
-    compileOnly files('libs/ProjectE-1.21.1-PE1.1.0.jar')
-    compileOnly files('libs/appliedenergistics2-19.2.17.jar')
-    compileOnly files('libs/jei-1.21.1-neoforge-19.27.0.340.jar')
+    // Create (slim jar, no transitive deps)
+    compileOnly("com.simibubi.create:create-1.21.1:6.0.9-215:slim") { transitive = false }
+    // ProjectE (via CurseMaven - no official Maven)
+    compileOnly "curse.maven:projecte-226410:6611984"
+    // Applied Energistics 2
+    compileOnly "org.appliedenergistics:appliedenergistics2:19.2.17"
+    // JEI API
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.27.0.340"
 }
 
 tasks.withType(JavaCompile).configureEach {

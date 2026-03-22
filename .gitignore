@@ -25,8 +25,5 @@ disconnect/
 texture_extract/
 *.ps1
 
-# Root duplicate jars (libs/ has the needed ones)
-/ProjectE-*.jar
-/appliedenergistics2-*.jar
-/create-*.jar
-/stationsoundsystem-*.jar
+# Jar files in root
+/*.jar
