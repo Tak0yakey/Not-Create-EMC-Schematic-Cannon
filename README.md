@@ -186,15 +186,15 @@ A NeoForge mod based on **Create**'s Schematic Cannon, featuring integration wit
 
 ### 📸 Screenshots
 
-\<p align="center"\>
-\<img src="説明用素材/items.png" width="700" alt="Added Items List"\>
-<br>\<em\>List of Added Items & Blocks\</em\>
-\</p\>
+<p align="center">
+  <img src="説明用素材/items.png" width="700" alt="Added Items">
+  <br><em>Added Items & Blocks</em>
+</p>
 
-\<p align="center"\>
-\<img src="説明用素材/gui.png" width="700" alt="GUI"\>
-<br>\<em\>Gen2 GUI — Expandable Tabs & Block List\</em\>
-\</p\>
+<p align="center">
+  <img src="説明用素材/gui.png" width="700" alt="GUI">
+  <br><em>Gen2 GUI — Expandable Tabs & Block List</em>
+</p>
 
 ### ✨ Added Items & Blocks
 
