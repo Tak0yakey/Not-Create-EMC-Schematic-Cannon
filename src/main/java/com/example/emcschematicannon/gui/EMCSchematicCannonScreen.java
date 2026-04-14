@@ -363,13 +363,6 @@ public class EMCSchematicCannonScreen extends AbstractContainerScreen<EMCSchemat
 
             ItemStack itemStack = getItemStackFromRegistryName(entry.getKey());
             if (!itemStack.isEmpty()) {
-                // EMC indicator using EMCused.png texture (16x16)
-                // 概略図モード: EMCを使用して設置 / 撤去モード: EMCに変換
-                if (menu.isUseEmc() && hasEmcValue(itemStack)) {
-                    graphics.blit(EMC_USED_TEXTURE,
-                            slotX, slotY,
-                            0, 0, 16, 16, 16, 16);
-                }
 
                 // Item icon
                 graphics.renderItem(itemStack, slotX, slotY);
@@ -729,10 +722,6 @@ public class EMCSchematicCannonScreen extends AbstractContainerScreen<EMCSchemat
     }
 
     private static boolean hasEmcValue(ItemStack stack) {
-        try {
-            var emcProxy = moze_intel.projecte.api.proxy.IEMCProxy.INSTANCE;
-            if (emcProxy != null) return emcProxy.hasValue(stack);
-        } catch (Exception | NoClassDefFoundError e) { }
         return false;
     }
 

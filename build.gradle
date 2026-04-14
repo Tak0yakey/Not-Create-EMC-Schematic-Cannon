@@ -53,8 +53,6 @@ neoForge {
 dependencies {
     // Create (slim jar, no transitive deps)
     compileOnly("com.simibubi.create:create-1.21.1:6.0.9-215:slim") { transitive = false }
-    // ProjectE (via CurseMaven - no official Maven)
-    compileOnly "curse.maven:projecte-226410:6611984"
     // Applied Energistics 2
     compileOnly "org.appliedenergistics:appliedenergistics2:19.2.17"
     // JEI API

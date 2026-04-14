@@ -109,7 +109,6 @@ public record CannonSettingsPacket(
 
                 cannon.setSkipMissing(packet.skipMissing);
                 cannon.setSkipTileEntities(packet.skipTileEntities);
-                cannon.setUseEmc(packet.useEmc);
                 cannon.setBlocksPerTick(packet.blocksPerTick());
                 cannon.setReuseSchematic(packet.reuseSchematic());
 

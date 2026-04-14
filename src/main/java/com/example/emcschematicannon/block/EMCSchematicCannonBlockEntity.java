@@ -84,7 +84,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            if (slot == SLOT_FUEL) return hasEmcValue(stack);
             if (slot == SLOT_SCHEMATIC) {
                 if (fillerMode) return isRangeBoardItem(stack);
                 else return isSchematicItem(stack);
@@ -141,7 +140,7 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
     private ReplaceMode replaceMode = ReplaceMode.REPLACE_ANY;
     private boolean skipMissing = false;
     private boolean skipTileEntities = false;
-    private boolean useEmc = true;
+    final private boolean useEmc = false;
     private StorageMode storageMode = StorageMode.AE_AND_CHEST;
     private boolean reuseSchematic = false;
     private int blocksPerTick = BLOCKS_PER_TICK;
@@ -310,13 +309,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
             }
         }
 
-        // EMC更新
-        if (ownerUUID != null) {
-            ServerPlayer owner = serverLevel.getServer().getPlayerList().getPlayer(ownerUUID);
-            if (owner != null) {
-                updateCachedEmc(owner);
-            }
-        }
 
         // 燃料アイテム消費 → 内部EMCバッファに変換
         consumeFuelItems();
@@ -428,19 +420,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
                         partAcquired = true;
                     } else if (useAe2 && tryExtractFromAE2(partItem)) {
                         partAcquired = true;
-                    } else if (useEmc) {
-                        long emcCost = getEmcValue(partItem);
-                        if (emcCost > 0) {
-                            if (internalEmcBuffer >= emcCost) {
-                                internalEmcBuffer -= emcCost;
-                                totalEmcUsed += emcCost;
-                                partAcquired = true;
-                            } else if (consumeEmc(owner, emcCost)) {
-                                totalEmcUsed += emcCost;
-                                partAcquired = true;
-                                emcSyncNeeded = true;
-                            }
-                        }
                     }
 
                     if (!partAcquired) {
@@ -474,21 +453,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
                 } else if (useAe2 && tryExtractFromAE2(targetState)) {
                     materialsAcquired = true;
                     // ae2
-                } else if (useEmc) {
-                    long emcCost = getEmcValue(targetState);
-                    if (emcCost > 0) {
-                        if (internalEmcBuffer >= emcCost) {
-                            internalEmcBuffer -= emcCost;
-                            totalEmcUsed += emcCost;
-                            materialsAcquired = true;
-                            // internal-emc
-                        } else if (consumeEmc(owner, emcCost)) {
-                            totalEmcUsed += emcCost;
-                            materialsAcquired = true;
-                            // player-emc
-                            emcSyncNeeded = true;
-                        }
-                    }
                 }
 
                 if (!materialsAcquired) {
@@ -516,24 +480,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
                     if (!removedItem.isEmpty()) {
                         boolean handled = false;
                         // EMC変換がON: EMC値があるブロックはすべてEMCに変換
-                        if (useEmc) {
-                            long emcValue = getEmcValue(removedState);
-                            if (emcValue > 0) {
-                                try {
-                                    var transmutationProxy = moze_intel.projecte.api.proxy.ITransmutationProxy.INSTANCE;
-                                    if (transmutationProxy != null) {
-                                        var provider = transmutationProxy.getKnowledgeProviderFor(owner.getUUID());
-                                        if (provider != null) {
-                                            provider.setEmc(provider.getEmc().add(BigInteger.valueOf(emcValue)));
-                                            cachedPlayerEmc = provider.getEmc().longValue();
-                                            totalEmcUsed += emcValue;
-                                            emcSyncNeeded = true;
-                                            handled = true;
-                                        }
-                                    }
-                                } catch (Exception e) { }
-                            }
-                        }
                         // EMC変換されなかった場合（EMCオフ or EMC値なし）: ストレージに搬入
                         if (!handled) {
                             boolean inserted = false;
@@ -584,9 +530,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
         }
 
         // EMC同期をtick末尾で1回だけ実行（毎ブロックsyncEmc呼出しを排除）
-        if (emcSyncNeeded) {
-            syncEmcToClient(owner);
-        }
 
         // キャッシュクリア
         cachedInventoryHandlers.clear();
@@ -808,37 +751,7 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
      * ownerUUIDが設定されている場合のみ動作。
      */
     private void consumeFuelItems() {
-        if (ownerUUID == null) return;
-        if (!(level instanceof ServerLevel serverLevel)) return;
-
-        ItemStack fuelStack = itemHandler.getStackInSlot(SLOT_FUEL);
-        if (fuelStack.isEmpty()) return;
-
-        ServerPlayer owner = serverLevel.getServer().getPlayerList().getPlayer(ownerUUID);
-        if (owner == null) return;
-
-        try {
-            var emcProxy = moze_intel.projecte.api.proxy.IEMCProxy.INSTANCE;
-            var transmutationProxy = moze_intel.projecte.api.proxy.ITransmutationProxy.INSTANCE;
-            if (emcProxy != null && transmutationProxy != null && emcProxy.hasValue(fuelStack)) {
-                long emcValue = emcProxy.getValue(fuelStack);
-                if (emcValue > 0) {
-                    var provider = transmutationProxy.getKnowledgeProviderFor(ownerUUID);
-                    if (provider != null) {
-                        fuelStack.shrink(1);
-                        if (fuelStack.isEmpty()) {
-                            itemHandler.setStackInSlot(SLOT_FUEL, ItemStack.EMPTY);
-                        }
-                        // プレイヤーのEMCに加算
-                        BigInteger current = provider.getEmc();
-                        provider.setEmc(current.add(BigInteger.valueOf(emcValue)));
-                        cachedPlayerEmc = provider.getEmc().longValue();
-                        provider.syncEmc(owner);
-                        setChanged();
-                    }
-                }
-            }
-        } catch (Exception e) { }
+        return;
     }
 
     // ===== スケマティック解析 =====
@@ -1388,91 +1301,11 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
         return null;
     }
 
-    // ===== EMC操作 =====
-    private long getEmcValue(BlockState blockState) {
-        try {
-            var emcProxy = moze_intel.projecte.api.proxy.IEMCProxy.INSTANCE;
-            if (emcProxy != null) {
-                ItemStack stack = new ItemStack(blockState.getBlock().asItem());
-                if (!stack.isEmpty()) {
-                    return emcProxy.getValue(stack);
-                }
-            }
-        } catch (Exception e) { }
-        return 0;
-    }
 
-    private long getEmcValue(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        try {
-            var emcProxy = moze_intel.projecte.api.proxy.IEMCProxy.INSTANCE;
-            if (emcProxy != null) {
-                return emcProxy.getValue(stack);
-            }
-        } catch (Exception e) { }
-        return 0;
-    }
 
-    private static boolean hasEmcValue(ItemStack stack) {
-        try {
-            var emcProxy = moze_intel.projecte.api.proxy.IEMCProxy.INSTANCE;
-            if (emcProxy != null) {
-                return emcProxy.hasValue(stack);
-            }
-        } catch (Exception e) { }
-        return false;
-    }
 
-    /**
-     * EMCを消費する（クライアント同期なし・バッチ用）。
-     * syncEmcToClient()をtick末尾で1回だけ呼ぶこと。
-     */
-    private boolean consumeEmc(ServerPlayer player, long amount) {
-        try {
-            var transmutationProxy = moze_intel.projecte.api.proxy.ITransmutationProxy.INSTANCE;
-            if (transmutationProxy != null) {
-                var provider = transmutationProxy.getKnowledgeProviderFor(player.getUUID());
-                if (provider != null) {
-                    BigInteger current = provider.getEmc();
-                    BigInteger cost = BigInteger.valueOf(amount);
-                    if (current.compareTo(cost) >= 0) {
-                        provider.setEmc(current.subtract(cost));
-                        cachedPlayerEmc = provider.getEmc().longValue();
-                        // syncEmc は tick末尾でバッチ呼び出し（毎ブロックで呼ぶとパケット洪水になる）
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) { }
-        return false;
-    }
 
-    /** tick末尾でEMC同期を1回だけ実行（バッチ） */
-    private void syncEmcToClient(ServerPlayer player) {
-        try {
-            var transmutationProxy = moze_intel.projecte.api.proxy.ITransmutationProxy.INSTANCE;
-            if (transmutationProxy != null) {
-                var provider = transmutationProxy.getKnowledgeProviderFor(player.getUUID());
-                if (provider != null) {
-                    provider.syncEmc(player);
-                }
-            }
-        } catch (Exception e) { }
-    }
 
-    private void updateCachedEmc(ServerPlayer player) {
-        try {
-            var transmutationProxy = moze_intel.projecte.api.proxy.ITransmutationProxy.INSTANCE;
-            if (transmutationProxy != null) {
-                var provider = transmutationProxy.getKnowledgeProviderFor(player.getUUID());
-                if (provider != null) {
-                    cachedPlayerEmc = provider.getEmc().longValue();
-                }
-            }
-        } catch (Exception e) {
-            cachedPlayerEmc = 0;
-        }
-    }
 
     // ===== 隣接チェスト連携 =====
 
@@ -2014,7 +1847,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
     public void setReplaceMode(ReplaceMode mode) { this.replaceMode = mode; setChanged(); }
     public void setSkipMissing(boolean skip) { this.skipMissing = skip; setChanged(); }
     public void setSkipTileEntities(boolean skip) { this.skipTileEntities = skip; setChanged(); }
-    public void setUseEmc(boolean use) { this.useEmc = use; setChanged(); }
     public StorageMode getStorageMode() { return storageMode; }
     public void setStorageMode(StorageMode mode) { this.storageMode = mode; setChanged(); }
     public boolean isReuseSchematic() { return reuseSchematic; }
@@ -2216,7 +2048,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
         }
         skipMissing = tag.getBoolean("SkipMissing");
         skipTileEntities = tag.getBoolean("SkipTileEntities");
-        if (tag.contains("UseEmc")) useEmc = tag.getBoolean("UseEmc");
         if (tag.contains("StorageMode")) {
             try { storageMode = StorageMode.valueOf(tag.getString("StorageMode")); }
             catch (Exception e) { storageMode = StorageMode.AE_AND_CHEST; }
@@ -2285,7 +2116,6 @@ public class EMCSchematicCannonBlockEntity extends BlockEntity implements MenuPr
     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             this.ownerUUID = serverPlayer.getUUID();
-            updateCachedEmc(serverPlayer);
             syncToClient();
         }
         return new EMCSchematicCannonMenu(containerId, inventory, this);

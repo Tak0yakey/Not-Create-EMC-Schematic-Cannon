@@ -35,13 +35,6 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.emcschematicannon]]
-modId = "projecte"
-type = "required"
-versionRange = "[1.0,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies.emcschematicannon]]
 modId = "ae2"
 type = "optional"
 versionRange = "[19.0,)"
